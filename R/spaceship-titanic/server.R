@@ -12,6 +12,8 @@ library(tidyverse)
 library(gtsummary)
 library(gt)
 library(ggpubr)
+library(survival)
+library(pROC)
 
 # dat <- read.csv("data/data.csv")
 
@@ -22,9 +24,10 @@ function(input, output, session) {
   
 data<- reactive({
 
-  dat <- read.csv("data/data.csv")
+  dat <- read.csv("data/data.csv") %>%
+    mutate(Transported = factor(Transported, levels=c("Not transported", "Transported")))
 
-  return(dat)
+  dat
 })
 
 
@@ -51,9 +54,6 @@ output$mygt<- gt::render_gt(
 # Graphical summary plot
 #Depends on input: Categorical or Continuous
 output$summaryplot<- renderPlot ({
-  
-  
-  
   if(input$predtype == "cont"){
     #Define vectors containing continuous and categorical variables
     cont<- c("Age", "RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck")
@@ -86,6 +86,34 @@ output$summaryplot<- renderPlot ({
   }
   
   })
+
+
+# Define formula to be used in glm
+form<- reactive({
+  as.formula(paste0("Transported ~ ", paste(input$preds, collapse = "+")))
+})
+
+
+# Run glm
+model<- eventReactive(input$build, {
+  glm(form(), data = data(), family = binomial)
+})
+  
+
+
+# Model summary
+output$modelsum<- renderPrint(summary(model()))
+
+
+# Model discrimination using concordance stat
+output$disc<- concordance(model())
+
+
+# # Model AUC
+# predictedprobs<- reactive({
+#   
+# })
+# output$auc<- 
 
 }
 
