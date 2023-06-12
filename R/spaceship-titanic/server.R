@@ -8,7 +8,6 @@
 #
 
 library(shiny)
-reactiveConsole(TRUE)
 library(tidyverse)
 library(gtsummary)
 library(gt)
@@ -31,42 +30,29 @@ data<- reactive({
 
 # Data dictionary
 output$datadic<- renderTable({
-  data.frame(Predictor = c("Age", "RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck", "HomePlanet", "Destination", "Deck", "Side", "VIP", "CryoSleep"),
-             `Predictor Type` = c(rep("Continuous", 6), rep("Categorical", 6)))
+  data_dictionary<- read.csv("data/data_dictionary.csv")
+  
+  data_dictionary
 })
 
 
-#Numerical summary table
+# Numerical summary table
 output$mygt<- gt::render_gt(
   data() %>%
     select(c(Transported, Age, RoomService:VRDeck, HomePlanet, Destination, DeckCat, Side, VIP, CryoSleep)) %>%
     tbl_summary(by = "Transported") %>%
-    modify_header(update = all_stat_cols(FALSE) ~ "**{level}**<br>N = {N}") %>%
+    modify_header(update = all_stat_cols(FALSE) ~ "**{level}**<br>N = {n}") %>%
     add_overall() %>%
     as_gt()
   
 )
 
 
-#Graphical summary plot
+# Graphical summary plot
 #Depends on input: Categorical or Continuous
 output$summaryplot<- renderPlot ({
   
-  if(input$predtype == "cat"){
-    #Define vectors containing categorical variables
-    cat<- c("HomePlanet", "Destination", "DeckCat", "Side", "VIP", "CryoSleep")
-    
-    #Create barplots for categorical variables
-    for (j in 1:length(cat)) {
-      assign(paste("p",j,sep=""),
-             ggplot(data(), aes_string(x = cat[j], fill = "Transported")) +
-               geom_bar(position = "dodge") +
-               theme_classic()
-             )
-    }
-    #Arrange on one plot
-    ggarrange(p1, p2, p3, p4, p5, p6, ncol=3, nrow = 2, common.legend = T, legend = "bottom")
-  }
+  
   
   if(input$predtype == "cont"){
     #Define vectors containing continuous and categorical variables
@@ -82,7 +68,23 @@ output$summaryplot<- renderPlot ({
     }
     #Arrange on one plot
     ggarrange(p1, p2, p3, p4, p5, p6, ncol=3, nrow = 2, common.legend = T, legend = "bottom")
+  } else
+    if(input$predtype == "cat"){
+    #Define vectors containing categorical variables
+    cat<- c("HomePlanet", "Destination", "DeckCat", "Side", "VIP", "CryoSleep")
+    
+    #Create barplots for categorical variables
+    for (j in 1:length(cat)) {
+      assign(paste("p",j,sep=""),
+             ggplot(data(), aes_string(x = cat[j], fill = "Transported")) +
+               geom_bar(position = "dodge") +
+               theme_classic()
+      )
+    }
+    #Arrange on one plot
+    ggarrange(p1, p2, p3, p4, p5, p6, ncol=3, nrow = 2, common.legend = T, legend = "bottom")
   }
+  
   })
 
 }
