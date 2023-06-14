@@ -1,0 +1,27 @@
+/* Get a fancy space font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+body {
+  background-color: white !important;
+}
+
+/* Change header text to imported font */
+h2 {
+  font-family: 'Orbitron';
+}
+
+/* Make text visible on inputs */
+.shiny-input-container {
+  color: #474747;
+}
+
+/* Change title text in dashboard header */
+.main-header .logo {
+  font-family: 'Orbitron';
+  /* font-weight: bold; */
+  /* font-size: 24px; */
+}
+
+.info-box-icon {
+  background-color: #3C8DBC !important;
+}
