@@ -12,6 +12,18 @@ library(shinydashboard)
 library(gt)
 
 
+# Define shinydashboard header
+header<- dashboardHeader(
+  title = "Spaceship Titanic",
+  tags$li(class = "dropdown",
+          tags$a(href = 'https://github.com/stephanieriley/spaceship-titanic',
+                 tags$div(HTML('<i class="fa-brands fa-github" style = "color:#ffffff;"></i>'))
+          )
+  ),
+  dropdownMenuOutput('messageMenu')
+)
+
+
 # Define shinydashboard sidebar
 sidebar<- dashboardSidebar(
   sidebarMenu(
@@ -26,11 +38,25 @@ sidebar<- dashboardSidebar(
   )
 )
 
+
 # Define body of shinydashboard
 body<- dashboardBody(
+
+  
+  #Customise text according to www/custom_style.css
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "custom_style.css")
+  ),
+  
+  #Customise style according to www/custom_style.css
+  tags$style(
+    tags$link(rel = "stylesheet", type = "text/css", href = "custom_style.css")
+    ),
+  
+  
   tabItems(
     #Welcome tab
-    tabItem(tabName = "intro", h1("Welcome aboard the Spaceship Titanic!"),
+    tabItem(tabName = "intro", h2("Welcome aboard the Spaceship Titanic!"),
             p("Welcome to the year 2912, where your data science skills are needed to solve a cosmic mystery. We've received a transmission from four lightyears away and things aren't looking good."),
             p("The Spaceship Titanic was an interstellar passenger liner launched a month ago. With almost 9,000 passengers on board, the vessel set out on its maiden voyage transporting emigrants from our solar system to three newly habitable exoplanets orbiting nearby stars."),
             p("While rounding Alpha Centauri en route to its first destination—the torrid 55 Cancri E—the unwary Spaceship Titanic collided with a spacetime anomaly hidden within a dust cloud. Sadly, it met a similar fate as its namesake from 1000 years before. Though the ship stayed intact, more than half of the passengers were transported to an alternate dimension!"),
@@ -41,10 +67,10 @@ body<- dashboardBody(
     
     
     #Summary tabs
-    tabItem(tabName = "numsum", h1("Numerical summary of predictors"),
+    tabItem(tabName = "numsum", h2("Numerical summary of predictors"),
             gt_output(outputId = "mygt")),
     
-    tabItem(tabName = "graphsum", h1("Graphical summary of predictors"),
+    tabItem(tabName = "graphsum", h2("Graphical summary of predictors"),
             selectInput("predtype", "Predictor type:",
                         choices = c("Categorical predictors" = "cat",
                                     "Continuous predictors" = "cont")),
@@ -53,22 +79,47 @@ body<- dashboardBody(
     
     #Build the model
     #First select predictor variables
-    tabItem(tabName = "modelbuild", h1("Build your model"),
-            p("Select which variables you would like to include in the prediction model"),
-            selectInput("preds", "Predictor variables:",
-                        c("Age", "RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck", "HomePlanet", "Destination", "DeckCat", "Side", "VIP", "CryoSleep"),
-                        multiple = TRUE),
-            actionButton("build", "Build model"),
-            p("Summary of the model"),
-            verbatimTextOutput("modelsum"))
-    
-    
+    tabItem(tabName = "modelbuild", h2("Build your model"),
+            fluidRow(
+              column(width=6,
+                     box(
+                       p("Select which variables you would like to include in the prediction model"),
+                       selectInput("preds", "Predictor variables:",
+                                   c("Age", "RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck", "HomePlanet", "Destination", "DeckCat", "Side", "VIP", "CryoSleep"),
+                                   multiple = TRUE),
+                       actionButton("build", "Build model"),
+                       # p("Summary of the model"),
+                       # verbatimTextOutput("modelsum"),
+                       br()
+                       ),
+                     
+                     box(
+                       p("Remember, you are trying to build the best prediction model based on the following metrics"),
+                       p(strong("Discrimination"), ": the percentage of passenger the model correctly identifies as being transported off. Values closer to 1 indicate better predictive performance."),
+                       p(strong("R-squared"), ": the percentage of variation explained by the selected predictors. Again, values closer to 1 indicate better model fit."), #Look at using withMathJax for LaTeX
+                       p("We are also looking for the simplest possible model. The best model will contain as little number of predictors as possible without compromising how well it performs.")
+                     )
+                     )
+              
+              ),
+            fluidRow(
+              column(width = 6,
+                     box(
+                       infoBoxOutput("discBox", width = 2.5)
+                       ),
+                     box(infoBoxOutput("rsquaredBox", width = 2.5))
+                
+              )
+              
+            )
+            )
   )
 )
 
 # Define UI for shiny dash
 dashboardPage(
-  dashboardHeader(title = "Spaceship Titanic"),
+  # dashboardHeader(title = "Spaceship Titanic"),
+  header,
   sidebar,
   body
 )
