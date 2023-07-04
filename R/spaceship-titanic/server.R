@@ -13,6 +13,8 @@ library(gtsummary)
 library(gt)
 library(ggpubr)
 library(survival)
+library(MASS)
+library(kableExtra)
 
 
 
@@ -39,7 +41,7 @@ output$datadic<- renderTable({
 # Numerical summary table
 output$mygt<- gt::render_gt(
   data() %>%
-    select(c(Transported, Age, RoomService:VRDeck, HomePlanet, Destination, DeckCat, Side, VIP, CryoSleep)) %>%
+    dplyr::select(c(Transported, Age, RoomService:VRDeck, HomePlanet, Destination, DeckCat, Side, VIP, CryoSleep)) %>%
     tbl_summary(by = "Transported") %>%
     modify_header(update = all_stat_cols(FALSE) ~ "**{level}**<br>N = {n}") %>%
     add_overall() %>%
@@ -85,6 +87,12 @@ output$summaryplot<- renderPlot ({
   })
 
 
+# Logistic regression model printed
+output$formula <- renderUI({
+  withMathJax(paste0("$$\\log \\left( \\frac{p}{1-p} \\right) = c + m_1 x_1 + m_2 x_2 + ... + m_k x_k $$"))
+})
+
+
 # Define formula to be used in glm
 form<- reactive({
   if(is.null(input$preds)) {
@@ -102,26 +110,28 @@ model<- reactive({
   
 
 
-# # Model summary
-# #Only find model summary once action button is clicked
-# modelsumm<- eventReactive(input$build, {
-#   summary(model())
-# })
-# 
-# output$modelsum<- renderPrint(modelsumm())
+# Model summary
+#Only find model summary once action button is clicked
+output$modelsum<- eventReactive(input$build, {
+  coefs<- data.frame(#Predictor = names(coef(backmod())),
+    Value = coef(model()) %>% round(digits = 4))
   
+  coefs %>%
+    knitr::kable("html") %>%
+    kable_styling("striped", full_width = F)
+})
 
 
-# Model discrimination using concordance stat (equivalent to AUC)
-disc<- eventReactive(input$build, {
-  as.numeric(concordance(model())$concordance) %>% round(digits=3)
-})
-#infobox
-output$discBox<- renderInfoBox({
-  infoBox(
-    "Discrimination", renderText(paste0(disc()*100, "%")), icon = icon("percent")
-  )
-})
+# # Model discrimination using concordance stat (equivalent to AUC)
+# disc<- eventReactive(input$build, {
+#   as.numeric(concordance(model())$concordance) %>% round(digits=3)
+# })
+# #infobox
+# output$discBox<- renderInfoBox({
+#   infoBox(
+#     "Discrimination", renderText(paste0(disc()*100, "%")), icon = icon("percent")
+#   )
+# })
 
 # McFadden's R-squared
 #Need loglikelihood for null model
@@ -135,6 +145,53 @@ output$rsquaredBox<- renderInfoBox({
   infoBox("R-squared", renderText(paste0(rsquared()*100, "%")), icon = icon("percent"))
 })
 
+# AIC
+aic<- eventReactive(input$build, {
+  AIC(model()) %>% round(digits=2)
+})
+#infobox
+output$aicBox<- renderInfoBox({
+  infoBox("AIC", renderText(aic()), icon = icon("arrow-down"))
+})
+
+
+
+#Backward elimination
+backmod<- reactive({
+  backmod<- glm(Transported ~ Age + HomePlanet + Destination + DeckCat + Side + VIP, data = data(), family=binomial)
+  backmod
+})
+
+
+#Predicted probs
+preddat<- eventReactive(input$predict, {
+  
+  
+  pred_info<- data.frame(Age = input$age,
+                         HomePlanet = input$home,
+                         Destination = input$dest,
+                         DeckCat = input$deckcat,
+                         Side = input$side,
+                         VIP = input$vip)
+  
+  prediction<- predict(backmod(), newdata = pred_info, type = "response")
+  
+  prediction
+})
+
+output$coeftable<- reactive({
+  coefs<- data.frame(#Predictor = names(coef(backmod())),
+                     Value = coef(backmod()) %>% round(digits = 4))
+  
+  coefs %>%
+    knitr::kable("html") %>%
+    kable_styling("striped", full_width = F,
+                  position = "left")
+})
+
+output$predprobBox<- renderInfoBox({
+  infoBox("Predicted probability", renderText(preddat()), icon = icon("arrow-down"))
+})
 
 
 }
