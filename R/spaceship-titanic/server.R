@@ -42,7 +42,8 @@ output$datadic<- renderTable({
 output$mygt<- gt::render_gt(
   data() %>%
     dplyr::select(c(Transported, Age, RoomService:VRDeck, HomePlanet, Destination, DeckCat, Side, VIP, CryoSleep)) %>%
-    tbl_summary(by = "Transported") %>%
+    tbl_summary(by = "Transported",
+                statistic = list(all_continuous() ~ "{mean} ({min}, {max})")) %>%
     modify_header(update = all_stat_cols(FALSE) ~ "**{level}**<br>N = {n}") %>%
     add_overall() %>%
     as_gt()
