@@ -46,7 +46,8 @@ output$mygt<- gt::render_gt(
                 statistic = list(all_continuous() ~ "{mean} ({min}, {max})")) %>%
     modify_header(update = all_stat_cols(FALSE) ~ "**{level}**<br>N = {n}") %>%
     add_overall() %>%
-    as_gt()
+    as_gt(),
+  align = "left"
   
 )
 
