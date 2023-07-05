@@ -23,5 +23,31 @@ h2 {
 }
 
 .info-box-icon {
-  background-color: #3C8DBC !important;
+  background-color: #31b4ed !important;
+}
+
+/* logo */
+.skin-blue .main-header .logo {
+background-color: #31b4ed;
+}
+                                
+/* navbar (rest of the header) */
+.skin-blue .main-header .navbar {
+background-color: #31b4ed;
+}
+                                
+/* main sidebar */
+.skin-blue .main-sidebar {
+background-color: #00c0c0;
+}
+                                
+/* active selected tab in the sidebarmenu */
+.skin-blue .main-sidebar .sidebar .sidebar-menu .active a{
+background-color: #00c0c0;
+}
+                                
+/* other links in the sidebarmenu */
+.skin-blue .main-sidebar .sidebar .sidebar-menu a{
+background-color: #00c0c0;
+color: #000000;
 }

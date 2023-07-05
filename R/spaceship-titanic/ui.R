@@ -15,11 +15,12 @@ library(gt)
 # Define shinydashboard header
 header<- dashboardHeader(
   title = "Spaceship Titanic",
+  
   tags$li(class = "dropdown",
           tags$a(href = 'https://github.com/stephanieriley/spaceship-titanic',
                  tags$div(HTML('<i class="fa-brands fa-github" style = "color:#ffffff;"></i>'))
-          )
-  ),
+                 )
+          ),
   dropdownMenuOutput('messageMenu')
 )
 
@@ -27,6 +28,9 @@ header<- dashboardHeader(
 # Define shinydashboard sidebar
 sidebar<- dashboardSidebar(
   sidebarMenu(
+    
+    menuItem(img(src="UoP2.png",width="100%")),
+    
     menuItem("Introduction", tabName = "intro", icon = icon("rocket", "rocket")),
     
     menuItem("Exploratory analysis", tabName = "eda", icon = icon("chart-line"),
@@ -54,6 +58,36 @@ body<- dashboardBody(
   tags$style(
     tags$link(rel = "stylesheet", type = "text/css", href = "custom_style.css")
     ),
+
+  tags$head(tags$style(HTML('
+                                /* logo */
+                                .skin-blue .main-header .logo {
+                                background-color: #31b4ed;
+                                }
+
+                                /* navbar (rest of the header) */
+                                .skin-blue .main-header .navbar {
+                                background-color: #31b4ed;
+                                }
+
+                                /* main sidebar */
+                                .skin-blue .main-sidebar {
+                                background-color: #31b4ed;
+                                }
+
+                                /* active selected tab in the sidebarmenu */
+                                .skin-blue .main-sidebar .sidebar .sidebar-menu .active a{
+                                background-color: #31b4ed;
+                                color: #ffffff;
+                                }
+
+                                /* other links in the sidebarmenu */
+                                .skin-blue .main-sidebar .sidebar .sidebar-menu a{
+                                background-color: #31b4ed;
+                                color: #000000;
+                                }
+
+                                '))),
   
   
   tabItems(
