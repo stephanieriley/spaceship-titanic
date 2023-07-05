@@ -126,9 +126,9 @@ body<- dashboardBody(
                      box(
                        numericInput("age", "Age: ", value = 20),
                        radioButtons("home", "Home planet: ",
-                                    choices = c("Europa","Earth","Mars")),
+                                    choices = c("Earth","Europa","Mars")),
                        radioButtons("dest", "Destination:",
-                                    choices = c("TRAPPIST-1e","PSO J318.5-22","55 Cancri e")),
+                                    choices = c("55 Cancri e","PSO J318.5-22","TRAPPIST-1e")),
                        radioButtons("deckcat", "Deck:",
                                     choices = c("Lower", "Middle", "Upper")),
                        radioButtons("side", "Side:",
