@@ -51,4 +51,4 @@ rsconnect/
 # Data
 data/
 figures/
-R/spaceship-titanic/data
+#R/spaceship-titanic/data
