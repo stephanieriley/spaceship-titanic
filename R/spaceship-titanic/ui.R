@@ -97,7 +97,8 @@ body<- dashboardBody(
             p("The Spaceship Titanic was an interstellar passenger liner launched a month ago. With over 6,500 passengers on board, the vessel set out on its maiden voyage transporting emigrants from our solar system to three newly habitable exoplanets orbiting nearby stars."),
             p("While rounding Alpha Centauri en route to its first destination—the torrid 55 Cancri E—the unwary Spaceship Titanic collided with a spacetime anomaly hidden within a dust cloud. Sadly, it met a similar fate as its namesake from 1000 years before. Though the ship stayed intact, more than half of the passengers were transported to an alternate dimension!"),
             h2("Your mission..."),
-            p("Today we will attempt to build a statistical model which can predict whether someone will be ", strong("Transported"), " or ", strong("Not Transported"), " off the Spaceship Titanic!"),
+            p("Before we can investigate this anomaly, we need to find out whether we can safely send a rescue team without running the risk of losing them to transportation."),
+            p("Your mission is to to build a statistical model which can predict whether someone will be ", strong("Transported"), " or ", strong("Not Transported"), " off the Spaceship Titanic!"),
             p("The table below shows which variables are available to use to make predictions. The data are available from ", a(href = "https://www.kaggle.com/competitions/spaceship-titanic/overview", "Kaggle.")),
             tableOutput("datadic")),
     
